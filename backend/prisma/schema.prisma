@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String
+  icon      String
+  count     Int       @default(0)
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id           String      @id @default(cuid())
+  name         String
+  price        Float
+  originalPrice Float?
+  image        String
+  images       String[]
+  categoryId   String
+  category     Category    @relation(fields: [categoryId], references: [id])
+  rating       Float       @default(0)
+  reviews      Int         @default(0)
+  description  String
+  features     String[]
+  inStock      Boolean     @default(true)
+  discount     Int?
+  isNew        Boolean     @default(false)
+  isFeatured   Boolean     @default(false)
+  isActive     Boolean     @default(true)
+  stockQty     Int         @default(50)
+  orderItems   OrderItem[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAYMENT_SUBMITTED
+  PAID
+  PACKED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentAction {
+  SUBMIT
+  RESUBMIT
+  APPROVE
+  REJECT
+}
+
+enum PaymentStatus {
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  passwordHash String
+  avatar    String?
+  role      UserRole @default(CUSTOMER)
+  orders    Order[]
+  reviewedPayments Payment[] @relation("PaymentReviewedBy")
+  paymentReviews   PaymentReview[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  orderNo       String      @unique
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  status        OrderStatus @default(PENDING_PAYMENT)
+
+  currency      String      @default("THB")
+  subtotal      Int
+  shippingFee   Int         @default(0)
+  total         Int
+
+  shippingName    String
+  shippingPhone   String
+  shippingAddress String
+
+  items         OrderItem[]
+  payment       Payment?
+  shipment      Shipment?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+
+  name      String
+  price     Int
+  quantity  Int
+  lineTotal Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+}
+
+model Payment {
+  id               String        @id @default(cuid())
+  orderId          String        @unique
+  order            Order         @relation(fields: [orderId], references: [id])
+  status           PaymentStatus @default(SUBMITTED)
+  slipPath         String
+  slipMime         String
+  slipOriginalName String
+  slipSize         Int
+  submittedAt      DateTime      @default(now())
+  approvedAt       DateTime?
+  reviewedAt       DateTime?
+  reviewedByUserId String?
+  reviewedByUser   User?         @relation("PaymentReviewedBy", fields: [reviewedByUserId], references: [id])
+  reviewNote       String?
+
+  reviews          PaymentReview[]
+}
+
+model PaymentReview {
+  id        String        @id @default(cuid())
+  paymentId String
+  payment   Payment       @relation(fields: [paymentId], references: [id])
+  adminId   String?
+  admin     User?         @relation(fields: [adminId], references: [id])
+  action    PaymentAction
+  note      String?
+  createdAt DateTime      @default(now())
+
+  @@index([paymentId])
+}
+
+model Shipment {
+  id          String   @id @default(cuid())
+  orderId     String   @unique
+  order       Order    @relation(fields: [orderId], references: [id])
+  carrier     String?
+  trackingNo  String?
+  shippedAt   DateTime?
+  deliveredAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
