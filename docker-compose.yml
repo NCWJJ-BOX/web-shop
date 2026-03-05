@@ -1,0 +1,70 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: web-shop-db
+    environment:
+      POSTGRES_USER: webuser
+      POSTGRES_PASSWORD: webpass
+      POSTGRES_DB: webshop
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U webuser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: web-shop-backend
+    environment:
+      DATABASE_URL: postgresql://webuser:webpass@postgres:5432/webshop
+      JWT_SECRET: ${JWT_SECRET:-dev_secret_change_me}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@store.local}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin1234}
+      ADMIN_NAME: ${ADMIN_NAME:-Store Admin}
+      PORT: 3001
+      UPLOAD_DIR: /app/uploads
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - backend_uploads:/app/uploads
+    command: >
+      sh -c "
+        npm install &&
+        npx prisma generate &&
+        npx prisma db push &&
+        npm run db:seed &&
+        npm run dev
+      "
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: web-shop-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+    command: >
+      sh -c "
+        npm install &&
+        npm run dev -- --host 0.0.0.0 --port 5173
+      "
+
+volumes:
+  postgres_data:
+  backend_uploads:
