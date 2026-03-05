@@ -1,6 +1,36 @@
-# Web Shop (Frontend + Backend + Postgres)
+# Web Shop
 
-This repo is a full-stack demo e-commerce app.
+แอปตัวอย่าง e-commerce แบบ full-stack (Frontend + Backend + Postgres) พร้อม flow ลูกค้า (สั่งซื้อ/อัปโหลดสลิป) และ Admin dashboard (อนุมัติการชำระเงิน/จัดการสินค้า/ติดตามการจัดส่ง)
+
+Tech stack:
+- Frontend: Vite + React + TypeScript
+- Backend: Express + Prisma
+- DB: Postgres
+- Run locally: Docker Compose
+
+## Screenshots
+
+### Customer
+
+![Customer - Home](img/Screenshot%202026-03-05%20190427.png)
+
+![Customer - Products](img/Screenshot%202026-03-05%20190433.png)
+
+![Customer - Cart](img/Screenshot%202026-03-05%20190442.png)
+
+![Customer - Checkout](img/Screenshot%202026-03-05%20190451.png)
+
+![Customer - Upload payment slip](img/Screenshot%202026-03-05%20190505.png)
+
+### Admin
+
+![Admin - Products management](img/Screenshot%202026-03-05%20190346.png)
+
+![Admin - Orders management](img/Screenshot%202026-03-05%20190414.png)
+
+![Admin - Payments review](img/Screenshot%202026-03-05%20190402.png)
+
+![Admin - Sales overview](img/Screenshot%202026-03-05%20190357.png)
 
 ## Quick Start
 
@@ -8,31 +38,23 @@ This repo is a full-stack demo e-commerce app.
 docker compose up -d --build
 ```
 
-Open:
+เปิดใช้งาน:
 - Frontend: http://localhost:5173
-- Backend: http://localhost:3001/api/health
-
-## Project Structure
-
-```
-frontend/   # Vite + React + TS
-backend/    # Express + Prisma + Postgres
-docker-compose.yml
-```
+- Backend health: http://localhost:3001/api/health
 
 ## Admin Dashboard
 
-Admin pages (left sidebar dashboard):
+หน้า Admin (เมนู sidebar ซ้าย):
 - Sales: `/admin`
-- Payments (slip review): `/admin/payments`
-- Orders (shipping/tracking): `/admin/orders`
-- Products (add/edit/disable, stock): `/admin/products`
+- Payments (ตรวจสลิป): `/admin/payments`
+- Orders (สถานะจัดส่ง/Tracking): `/admin/orders`
+- Products (เพิ่ม/แก้ไข/ปิดการขาย/สต็อก): `/admin/products`
 
-Default admin user (seeded at startup):
+ผู้ใช้ Admin เริ่มต้น (seed ตอน start):
 - Email: `admin@store.local`
 - Password: `admin1234`
 
-Change credentials by exporting env vars before compose:
+เปลี่ยน credentials โดย export env ก่อนรัน compose:
 
 ```bash
 export ADMIN_EMAIL="admin@example.com"
@@ -45,20 +67,29 @@ docker compose up -d --build
 
 1. Register / Login
 2. Add products to cart
-3. Checkout (creates an order)
-4. Upload a payment slip image
-5. Admin approves/rejects the payment
+3. Checkout (สร้าง Order)
+4. อัปโหลดรูปสลิปการชำระเงิน
+5. Admin อนุมัติ/ปฏิเสธการชำระเงิน
 
 Notes:
-- Slip upload sets order status to `PAYMENT_SUBMITTED`.
-- Admin approval sets order to `PAID`.
-- Admin rejection requires a reason and returns reserved stock.
+- Upload สลิปจะตั้งสถานะเป็น `PAYMENT_SUBMITTED`
+- Admin อนุมัติจะตั้งสถานะเป็น `PAID`
+- Admin ปฏิเสธต้องใส่เหตุผล และคืนสต็อกที่ reserve ไว้
+
+## Project Structure
+
+```
+frontend/   # Vite + React + TS
+backend/    # Express + Prisma + Postgres
+img/        # screenshots for README
+docker-compose.yml
+```
 
 ## Uploads
 
-- Payment slips are served from `GET /uploads/...`.
-- Product images can be uploaded from admin (stored under `/uploads/products/...`).
+- Payment slips served at `GET /uploads/...`
+- Product images อัปโหลดจากหน้า Admin (เก็บไว้ที่ `/uploads/products/...`)
 
 ## Troubleshooting
 
-- If you access the frontend via a LAN IP (e.g. `http://192.168.x.x:5173`), the frontend automatically calls the backend at `http://<same-host>:3001`.
+- ถ้าเข้าหน้าเว็บผ่าน LAN IP (เช่น `http://192.168.x.x:5173`) ตัว frontend จะเรียก backend ที่ `http://<same-host>:3001` อัตโนมัติ
