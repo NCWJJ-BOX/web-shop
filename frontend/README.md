@@ -12,25 +12,25 @@ Tech stack:
 
 ### Customer
 
-![Customer - Home](img/Screenshot%202026-03-05%20190427.png)
+![Customer - Home](_legacy_root/img/Screenshot%202026-03-05%20190427.png)
 
-![Customer - Products](img/Screenshot%202026-03-05%20190433.png)
+![Customer - Products](_legacy_root/img/Screenshot%202026-03-05%20190433.png)
 
-![Customer - Cart](img/Screenshot%202026-03-05%20190442.png)
+![Customer - Cart](_legacy_root/img/Screenshot%202026-03-05%20190442.png)
 
-![Customer - Checkout](img/Screenshot%202026-03-05%20190451.png)
+![Customer - Checkout](_legacy_root/img/Screenshot%202026-03-05%20190451.png)
 
-![Customer - Upload payment slip](img/Screenshot%202026-03-05%20190505.png)
+![Customer - Upload payment slip](_legacy_root/img/Screenshot%202026-03-05%20190505.png)
 
 ### Admin
 
-![Admin - Products management](img/Screenshot%202026-03-05%20190346.png)
+![Admin - Products management](_legacy_root/img/Screenshot%202026-03-05%20190346.png)
 
-![Admin - Orders management](img/Screenshot%202026-03-05%20190414.png)
+![Admin - Orders management](_legacy_root/img/Screenshot%202026-03-05%20190414.png)
 
-![Admin - Payments review](img/Screenshot%202026-03-05%20190402.png)
+![Admin - Payments review](_legacy_root/img/Screenshot%202026-03-05%20190402.png)
 
-![Admin - Sales overview](img/Screenshot%202026-03-05%20190357.png)
+![Admin - Sales overview](_legacy_root/img/Screenshot%202026-03-05%20190357.png)
 
 ## Quick Start
 
@@ -40,7 +40,7 @@ docker compose up -d --build
 
 เปิดใช้งาน:
 - Frontend: http://localhost:5173
-- Backend health: http://localhost:3001/api/health
+ - Backend health: http://localhost:3002/api/health
 
 ## Admin Dashboard
 
@@ -79,9 +79,9 @@ Notes:
 ## Project Structure
 
 ```
-frontend/   # Vite + React + TS
-backend/    # Express + Prisma + Postgres
-img/        # screenshots for README
+backend/          # Express + Prisma + Postgres
+frontend/         # Vite + React + TS
+  _legacy_root/   # legacy root app files + screenshots
 docker-compose.yml
 ```
 
@@ -92,4 +92,4 @@ docker-compose.yml
 
 ## Troubleshooting
 
-- ถ้าเข้าหน้าเว็บผ่าน LAN IP (เช่น `http://192.168.x.x:5173`) ตัว frontend จะเรียก backend ที่ `http://<same-host>:3001` อัตโนมัติ
+- ถ้าเข้าหน้าเว็บผ่าน LAN IP (เช่น `http://192.168.x.x:5173`) ให้ตั้ง `VITE_API_URL=http://<host-ip>:3002` ก่อนรัน compose (ค่า default ใน `docker-compose.yml` คือ `http://localhost:3002`)
