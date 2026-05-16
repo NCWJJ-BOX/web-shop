@@ -7,8 +7,8 @@ export function AuthModal(props: {
   isOpen: boolean;
   onClose: () => void;
   loading: boolean;
-  onLogin: (email: string, password: string) => Promise<void>;
-  onRegister: (name: string, email: string, password: string) => Promise<void>;
+  onLogin: (email: string, password: string) => Promise<void | unknown>;
+  onRegister: (name: string, email: string, password: string) => Promise<void | unknown>;
 }) {
   const { isOpen, onClose, loading, onLogin, onRegister } = props;
   const [mode, setMode] = useState<Mode>('login');

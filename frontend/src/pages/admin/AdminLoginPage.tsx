@@ -14,7 +14,7 @@ export function AdminLoginPage() {
     setError(null);
     try {
       const user = await auth.login(email, password);
-      if (user.role !== 'ADMIN') {
+      if (!user || user.role !== 'ADMIN') {
         auth.logout();
         setError('Not an admin account');
         return;

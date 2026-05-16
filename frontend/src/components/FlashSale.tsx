@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { apiFetch } from '../api/client';
+import { fetchFeaturedProducts } from '../lib/db';
 import { Product } from '../types';
 
 export const FlashSale: React.FC = () => {
@@ -8,15 +8,7 @@ export const FlashSale: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    const fetchSaleProducts = async () => {
-      try {
-        const data = await apiFetch<Product[]>('/api/products/featured');
-        setProducts(data.slice(0, 6));
-      } catch (error) {
-        console.error('Failed to fetch flash sale products:', error);
-      }
-    };
-    void fetchSaleProducts();
+    fetchFeaturedProducts().then((data) => setProducts(data.slice(0, 6))).catch(console.error);
   }, []);
 
   useEffect(() => {

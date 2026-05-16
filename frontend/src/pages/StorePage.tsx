@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState, useCallback } from 'react';
 import { Header } from '../components/Header';
 import { Hero } from '../components/Hero';
 import { FlashSale } from '../components/FlashSale';
@@ -14,12 +13,10 @@ import { AccountModal } from '../components/AccountModal';
 import { useCart } from '../hooks/useCart';
 import { useWishlist } from '../hooks/useWishlist';
 import { useAuth } from '../hooks/useAuth';
-import { apiFetch, apiUpload } from '../api/client';
-import { Category, Order, Product } from '../types';
+import { Category, Product } from '../types';
+import { fetchCategories, fetchProducts } from '../lib/db';
 
 export function StorePage() {
-  const navigate = useNavigate();
-
   const [categories, setCategories] = useState<Category[]>([]);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,100 +33,65 @@ export function StorePage() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
 
-  useEffect(() => {
-    void fetchCategories();
-    void fetchProducts();
-  }, []);
-
-  const fetchCategories = async () => {
+  const loadProducts = useCallback(async () => {
+    setLoading(true);
     try {
-      const data = await apiFetch<Category[]>('/api/categories');
-      setCategories(data);
-    } catch (error) {
-      console.error('Failed to fetch categories:', error);
-    }
-  };
-
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const params = new URLSearchParams();
-      if (selectedCategory !== 'all') {
-        params.append('category', selectedCategory);
-      }
-      if (searchQuery.trim()) {
-        params.append('search', searchQuery);
-      }
-
-      const url = `/api/products${params.toString() ? `?${params}` : ''}`;
-      const data = await apiFetch<Product[]>(url);
+      const catId = selectedCategory === 'all' ? undefined : selectedCategory;
+      const q = searchQuery || undefined;
+      const data = await fetchProducts(catId, q);
       setAllProducts(data);
-    } catch (error) {
-      console.error('Failed to fetch products:', error);
+    } catch (e) {
+      console.error('Failed to fetch products:', e);
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    const debounce = setTimeout(() => {
-      void fetchProducts();
-    }, 300);
-    return () => clearTimeout(debounce);
   }, [selectedCategory, searchQuery]);
 
-  const filteredProducts = useMemo(() => allProducts, [allProducts]);
+  useEffect(() => {
+    fetchCategories().then(setCategories).catch(console.error);
+  }, []);
 
-  const handleQuickView = (product: Product) => {
+  useEffect(() => {
+    void loadProducts();
+  }, [loadProducts]);
+
+  const openProductModal = (product: Product) => {
     setSelectedProduct(product);
     setIsProductModalOpen(true);
   };
-
   const closeProductModal = () => {
     setIsProductModalOpen(false);
     setSelectedProduct(null);
   };
 
-  const onAccountClick = () => {
-    if (!auth.isAuthenticated) {
-      setIsAuthOpen(true);
-      return;
-    }
-    if (auth.user?.role === 'ADMIN') {
-      navigate('/admin');
-      return;
-    }
-    setIsAccountOpen(true);
-  };
-
   return (
-    <div className="min-h-screen bg-[#030712] selection:bg-blue-500/30">
+    <div className="min-h-screen bg-[#f5f5f5]">
       <Header
         cartCount={cart.cartCount}
         wishlistCount={wishlist.wishlistCount}
         onCartClick={() => cart.setIsCartOpen(true)}
         onSearchChange={setSearchQuery}
-        onAccountClick={onAccountClick}
+        onAccountClick={() => setIsAuthOpen(true)}
         userName={auth.user?.name}
       />
 
-      <Hero />
-      <FlashSale />
-
-      <CategoryGrid
-        categories={categories}
-        selectedCategory={selectedCategory}
-        onCategorySelect={setSelectedCategory}
-      />
-
-      <ProductGrid
-        products={filteredProducts}
-        onAddToCart={cart.addToCart}
-        onToggleWishlist={wishlist.toggleWishlist}
-        isInWishlist={wishlist.isInWishlist}
-        onQuickView={handleQuickView}
-        loading={loading}
-      />
+      <main>
+        <Hero />
+        <FlashSale />
+        <CategoryGrid
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategorySelect={setSelectedCategory}
+        />
+        <ProductGrid
+          products={allProducts}
+          onAddToCart={cart.addToCart}
+          onToggleWishlist={wishlist.toggleWishlist}
+          isInWishlist={wishlist.isInWishlist}
+          onQuickView={openProductModal}
+          loading={loading}
+        />
+      </main>
 
       <Footer />
 
@@ -165,53 +127,30 @@ export function StorePage() {
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
         loading={auth.loading}
-        onLogin={async (email, password) => {
-          await auth.login(email, password);
-        }}
-        onRegister={async (name, email, password) => {
-          await auth.register(name, email, password);
-        }}
+        onLogin={auth.login}
+        onRegister={auth.register}
       />
-
-      {auth.user && auth.user.role !== 'ADMIN' && (
-        <AccountModal
-          isOpen={isAccountOpen}
-          onClose={() => setIsAccountOpen(false)}
-          user={{ name: auth.user.name, email: auth.user.email }}
-          onLogout={auth.logout}
-          loadOrders={async () => {
-            return await apiFetch<Order[]>('/api/orders/me');
-          }}
-          uploadSlip={async (orderId, slip) => {
-            const form = new FormData();
-            form.append('slip', slip);
-            const data = await apiUpload<{ order: Order }>(`/api/orders/${orderId}/payment-slip`, form);
-            return data.order;
-          }}
-        />
-      )}
 
       <CheckoutModal
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
         items={cart.cartItems}
-        total={Math.round(cart.cartTotal * 35)}
-        isAuthenticated={auth.isAuthenticated}
-        onCreateOrder={async (input) => {
-          const order = await apiFetch<Order>('/api/orders', {
-            method: 'POST',
-            body: JSON.stringify(input),
-          });
-          cart.clearCart();
-          return order;
-        }}
-        onUploadSlip={async (orderId, slip) => {
-          const form = new FormData();
-          form.append('slip', slip);
-          const data = await apiUpload<{ order: Order }>(`/api/orders/${orderId}/payment-slip`, form);
-          return data.order;
-        }}
+        total={cart.cartTotal}
+        isAuthenticated={!!auth.user}
+        onCreateOrder={async () => ({ id: 'demo', orderNo: 'DEMO-001', status: 'PENDING_PAYMENT', currency: 'THB', subtotal: 0, shippingFee: 0, total: 0, shippingName: '', shippingPhone: '', shippingAddress: '', items: [], createdAt: new Date().toISOString() })}
+        onUploadSlip={async () => ({ id: 'demo', orderNo: 'DEMO-001', status: 'PAYMENT_SUBMITTED', currency: 'THB', subtotal: 0, shippingFee: 0, total: 0, shippingName: '', shippingPhone: '', shippingAddress: '', items: [], createdAt: new Date().toISOString() })}
       />
+
+      {auth.user && (
+        <AccountModal
+          isOpen={isAccountOpen}
+          onClose={() => setIsAccountOpen(false)}
+          user={auth.user}
+          onLogout={auth.logout}
+          loadOrders={async () => []}
+          uploadSlip={async () => ({ id: 'demo', orderNo: 'DEMO-001', status: 'PAYMENT_SUBMITTED', currency: 'THB', subtotal: 0, shippingFee: 0, total: 0, shippingName: '', shippingPhone: '', shippingAddress: '', items: [], createdAt: new Date().toISOString() })}
+        />
+      )}
     </div>
   );
 }

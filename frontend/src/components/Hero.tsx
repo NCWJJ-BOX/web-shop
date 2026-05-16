@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { ChevronRight } from 'lucide-react';
-import { apiFetch } from '../api/client';
+import { fetchCategories } from '../lib/db';
 import { Category } from '../types';
 
 const BANNERS = [
@@ -15,15 +15,7 @@ export const Hero: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await apiFetch<Category[]>('/api/categories');
-        setCategories(data);
-      } catch (error) {
-        console.error('Failed to fetch categories:', error);
-      }
-    };
-    void fetchCategories();
+    fetchCategories().then(setCategories).catch(console.error);
   }, []);
 
   useEffect(() => {
