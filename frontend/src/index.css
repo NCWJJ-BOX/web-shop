@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #ffffff;
+  --color-foreground: #212121;
+  
+  --color-lazada-orange: #ff4e00;
+  --color-lazada-blue: #00126d;
+  --color-lazada-surface: #eff0f5;
+  --color-lazada-gray: #757575;
+  --color-lazada-border: #e0e0e0;
+  --color-lazada-link: #1a9cb7;
+
+  /* Tailwind v4 tokens */
+  --color-border: var(--color-lazada-border);
+  --color-muted: var(--color-lazada-gray);
+  --color-primary: var(--color-lazada-orange);
+
+  --font-sans: "Roboto", "Helvetica Neue", "Arial", sans-serif;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #212121;
+}
+
+.dark {
+  --background: #121212;
+  --foreground: #ffffff;
+}
+
+@layer base {
+  * {
+    @apply border-lazada-border outline-none;
+  }
+  body {
+    @apply bg-lazada-surface text-foreground;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/80 backdrop-blur-md border border-white/20;
+  }
+  
+  .sticky-header {
+    @apply sticky top-0 z-50 bg-white border-b border-lazada-border shadow-sm;
+  }
+}
