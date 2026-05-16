@@ -1,71 +1,101 @@
 "use client";
-import React from 'react';
-import { Search, ShoppingCart, User, Globe, PhoneCall, HelpCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, ShoppingCart, Heart, User } from 'lucide-react';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  cartCount: number;
+  wishlistCount: number;
+  onCartClick: () => void;
+  onSearchChange: (query: string) => void;
+  onAccountClick: () => void;
+  userName?: string;
+}
+
+export const Header: React.FC<HeaderProps> = ({
+  cartCount,
+  wishlistCount,
+  onCartClick,
+  onSearchChange,
+  onAccountClick,
+  userName,
+}) => {
+  const [searchValue, setSearchValue] = useState('');
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setSearchValue(val);
+    onSearchChange(val);
+  };
+
   return (
-    <div className="w-full">
-      {/* Top Campaign Banner Mockup */}
-      <div className="w-full h-[40px] bg-[#fde9e7] flex items-center justify-center text-[#ff4e00] text-xs font-bold cursor-pointer hover:underline">
-        ช้อปคุ้มกว่าเดิม! แจกโค้ดส่วนลดสูงสุด 500 บาท เฉพาะวันนี้เท่านั้น
+    <header className="sticky top-0 z-50 bg-white shadow-sm">
+      {/* Top bar */}
+      <div className="bg-orange-500 text-white text-center text-xs py-1.5 font-medium">
+        Flash Sale! ลดสูงสุด 80% เฉพาะวันนี้
       </div>
 
-      {/* Utility Bar */}
-      <div className="w-full bg-[#eff0f5] py-1 border-b border-gray-200">
-        <div className="max-w-[1188px] mx-auto px-4 flex justify-end gap-6 text-[12px] text-[#757575]">
-          <a href="#" className="hover:text-[#ff4e00] flex items-center gap-1"><PhoneCall size={12} /> ติดต่อเรา</a>
-          <a href="#" className="hover:text-[#ff4e00] flex items-center gap-1"><HelpCircle size={12} /> ศูนย์ช่วยเหลือ</a>
-          <a href="#" className="hover:text-[#ff4e00] flex items-center gap-1 uppercase tracking-tighter font-bold text-[#00126d]">Lazada Logistics</a>
-          <a href="#" className="hover:text-[#ff4e00]">ติดตามสินค้า</a>
-          <a href="#" className="hover:text-[#ff4e00]">ลงชื่อเข้าใช้</a>
-          <a href="#" className="hover:text-[#ff4e00]">สมัครสมาชิก</a>
-          <a href="#" className="hover:text-[#ff4e00] flex items-center gap-1">CHANGE LANGUAGE <Globe size={12} /></a>
+      {/* Main header */}
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-4">
+        {/* Logo */}
+        <div className="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+          <div className="w-9 h-9 bg-orange-500 rounded-xl flex items-center justify-center shadow-sm">
+            <span className="text-white font-black text-lg">W</span>
+          </div>
+          <span className="text-xl font-bold text-gray-900 hidden sm:block">WebShop</span>
+        </div>
+
+        {/* Search */}
+        <div className="flex-grow max-w-xl">
+          <div className="relative flex">
+            <input
+              type="text"
+              value={searchValue}
+              onChange={handleSearch}
+              placeholder="ค้นหาสินค้า..."
+              className="w-full border-2 border-orange-500 rounded-l-xl py-2.5 px-4 text-sm focus:outline-none"
+            />
+            <button className="bg-orange-500 text-white px-5 rounded-r-xl hover:bg-orange-600 flex items-center">
+              <Search size={18} />
+            </button>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-4 text-gray-700">
+          <button
+            onClick={onAccountClick}
+            className="flex flex-col items-center gap-0.5 hover:text-orange-500"
+          >
+            <User size={22} />
+            <span className="text-[11px] font-medium hidden md:block">
+              {userName || 'เข้าสู่ระบบ'}
+            </span>
+          </button>
+
+          <button className="relative flex flex-col items-center gap-0.5 hover:text-orange-500">
+            <Heart size={22} />
+            <span className="text-[11px] font-medium hidden md:block"> Wishlist</span>
+            {wishlistCount > 0 && (
+              <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                {wishlistCount}
+              </span>
+            )}
+          </button>
+
+          <button
+            onClick={onCartClick}
+            className="relative flex flex-col items-center gap-0.5 hover:text-orange-500"
+          >
+            <ShoppingCart size={22} />
+            <span className="text-[11px] font-medium hidden md:block"> ตะกร้า</span>
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
+          </button>
         </div>
       </div>
-
-      {/* Main Header (Sticky) */}
-      <header className="sticky top-0 z-50 bg-white shadow-sm py-4">
-        <div className="max-w-[1188px] mx-auto px-4 flex items-center gap-8">
-          {/* Logo Placeholder */}
-          <div className="flex-shrink-0 cursor-pointer">
-             <div className="flex items-center gap-1">
-                <div className="w-8 h-8 bg-[#ff4e00] rounded-lg flex items-center justify-center">
-                   <span className="text-white font-black text-xl italic">L</span>
-                </div>
-                <span className="text-2xl font-black tracking-tighter text-[#00126d]">Lazada</span>
-             </div>
-          </div>
-
-          {/* Search Bar */}
-          <div className="flex-grow max-w-[700px]">
-            <div className="relative flex">
-              <input 
-                type="text" 
-                placeholder="ค้นหาในลาซาด้า" 
-                className="w-full bg-[#eff0f5] py-2.5 px-4 outline-none text-sm placeholder:text-[#9e9e9e] focus:bg-white focus:ring-1 focus:ring-[#ff4e00] transition-all"
-              />
-              <button className="bg-[#ff4e00] text-white px-5 flex items-center justify-center hover:bg-[#e64600] transition-colors">
-                <Search size={20} strokeWidth={3} />
-              </button>
-            </div>
-          </div>
-
-          {/* Icons */}
-          <div className="flex items-center gap-8 text-[#00126d]">
-            <div className="relative cursor-pointer hover:opacity-80">
-              <ShoppingCart size={28} strokeWidth={1.5} />
-              <span className="absolute -top-2 -right-2 bg-[#ff4e00] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
-            </div>
-            <div className="cursor-pointer hover:opacity-80">
-               <img 
-                 src="https://laz-img-cdn.alicdn.com/tfs/TB196t_Xv1TBuNjy0FjXXajpXXa-32-32.png" 
-                 alt="wallet" 
-                 className="w-7 h-7 object-contain"
-               />
-            </div>
-          </div>
-        </div>
-      </header>
-    </div>
+    </header>
   );
 };

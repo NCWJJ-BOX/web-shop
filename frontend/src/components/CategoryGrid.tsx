@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Category } from '../types';
 
 interface CategoryGridProps {
@@ -8,69 +7,71 @@ interface CategoryGridProps {
   onCategorySelect: (id: string) => void;
 }
 
+const CATEGORY_IMAGES: Record<string, string> = {
+  'electronics': 'https://images.unsplash.com/photo-1519389403241-75e17e6975a9?auto=format&fit=crop&q=80&w=400',
+  'fashion': 'https://images.unsplash.com/photo-1445204450317-197ef2c9a717?auto=format&fit=crop&q=80&w=400',
+  'home': 'https://images.unsplash.com/photo-1484101403033-57105e2e4756?auto=format&fit=crop&q=80&w=400',
+  'beauty': 'https://images.unsplash.com/photo-1522338242962-d602a92f0003?auto=format&fit=crop&q=80&w=400',
+  'sports': 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=400',
+};
+
+function getCategoryImage(name: string): string {
+  const lower = name.toLowerCase();
+  for (const [key, url] of Object.entries(CATEGORY_IMAGES)) {
+    if (lower.includes(key)) return url;
+  }
+  return 'https://images.unsplash.com/photo-1558060370-d641c0b1f246?auto=format&fit=crop&q=80&w=400';
+}
+
 export const CategoryGrid: React.FC<CategoryGridProps> = ({
   categories,
   selectedCategory,
   onCategorySelect,
 }) => {
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-        <div>
-          <h2 className="text-4xl font-black mb-4">Curated Categories</h2>
-          <p className="text-gray-400 max-w-md">Browse our hand-picked selection of high-quality gear and lifestyle accessories.</p>
-        </div>
-        
-        <div className="flex flex-wrap gap-2">
+    <section className="max-w-7xl mx-auto px-4 mt-6">
+      <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-lg font-bold text-gray-900">หมวดหมู่สินค้า</h2>
           <button
             onClick={() => onCategorySelect('all')}
-            className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all border ${
+            className={`text-sm font-medium px-4 py-1.5 rounded-full transition-colors ${
               selectedCategory === 'all'
-                ? 'bg-white text-black border-white'
-                : 'bg-transparent text-gray-400 border-white/10 hover:border-white/30'
+                ? 'bg-orange-500 text-white'
+                : 'text-orange-500 hover:bg-orange-50'
             }`}
           >
-            All Products
+            ดูทั้งหมด
           </button>
+        </div>
+
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
           {categories.map((category) => (
-            <button
+            <div
               key={category.id}
               onClick={() => onCategorySelect(category.id.toString())}
-              className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all border ${
+              className={`group cursor-pointer text-center p-3 rounded-xl border transition-all ${
                 selectedCategory === category.id.toString()
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-transparent text-gray-400 border-white/10 hover:border-white/30'
+                  ? 'border-orange-500 bg-orange-50'
+                  : 'border-gray-100 hover:border-orange-200 hover:bg-orange-50/50'
               }`}
             >
-              {category.name}
-            </button>
+              <div className="w-14 h-14 mx-auto mb-2 rounded-full overflow-hidden bg-gray-100">
+                <img
+                  src={getCategoryImage(category.name)}
+                  alt={category.name}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = `https://via.placeholder.com/100x100?text=${category.name}`;
+                  }}
+                />
+              </div>
+              <span className="text-xs font-medium text-gray-700 group-hover:text-orange-500 transition-colors">
+                {category.name}
+              </span>
+            </div>
           ))}
         </div>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {categories.slice(0, 5).map((category, index) => (
-          <motion.div
-            key={category.id}
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ delay: index * 0.1 }}
-            onClick={() => onCategorySelect(category.id.toString())}
-            className="group relative aspect-square rounded-3xl overflow-hidden cursor-pointer"
-          >
-            <img 
-              src={`https://images.unsplash.com/photo-${1500000000000 + index}?auto=format&fit=crop&q=80&w=400`} 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0"
-              alt={category.name}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-6">
-              <div>
-                <h3 className="text-xl font-bold">{category.name}</h3>
-                <p className="text-xs text-gray-400 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Explore Items &rarr;</p>
-              </div>
-            </div>
-          </motion.div>
-        ))}
       </div>
     </section>
   );

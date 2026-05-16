@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { BarChart3, CreditCard, Package, Store, LogOut, Truck } from 'lucide-react';
+import { BarChart3, CreditCard, Package, Store, LogOut, Truck, Tag } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
 function classNames(active: boolean) {
@@ -56,6 +56,10 @@ export function AdminLayout() {
               <NavLink to="/admin/products" className={({ isActive }) => classNames(isActive)}>
                 <Package className="h-5 w-5" />
                 Products
+              </NavLink>
+              <NavLink to="/admin/categories" className={({ isActive }) => classNames(isActive)}>
+                <Tag className="h-5 w-5" />
+                Categories
               </NavLink>
             </nav>
 

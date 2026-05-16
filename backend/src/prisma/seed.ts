@@ -88,11 +88,10 @@ async function main() {
       name: 'iPhone 15 Pro Max 256GB',
       price: 1299,
       originalPrice: 1399,
-      image: 'https://images.pexels.com/photos/788946/pexels-photo-788946.jpeg',
+      image: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&q=80&w=800',
       images: [
-        'https://images.pexels.com/photos/788946/pexels-photo-788946.jpeg',
-        'https://images.pexels.com/photos/1092644/pexels-photo-1092644.jpeg',
-        'https://images.pexels.com/photos/887751/pexels-photo-887751.jpeg'
+        'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1512054813030-24510a20245a?auto=format&fit=crop&q=80&w=800'
       ],
       categoryId: 'electronics',
       rating: 4.8,
@@ -109,10 +108,10 @@ async function main() {
       name: 'Premium Wireless Headphones',
       price: 299,
       originalPrice: 399,
-      image: 'https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg',
+      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=800',
       images: [
-        'https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg',
-        'https://images.pexels.com/photos/1649771/pexels-photo-1649771.jpeg'
+        'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1583394838336-acd9929a339e?auto=format&fit=crop&q=80&w=800'
       ],
       categoryId: 'electronics',
       rating: 4.6,
@@ -129,10 +128,10 @@ async function main() {
       name: 'Designer Leather Jacket',
       price: 189,
       originalPrice: 259,
-      image: 'https://images.pexels.com/photos/1124465/pexels-photo-1124465.jpeg',
+      image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=800',
       images: [
-        'https://images.pexels.com/photos/1124465/pexels-photo-1124465.jpeg',
-        'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
+        'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1520975916090-3105956dac38?auto=format&fit=crop&q=80&w=800'
       ],
       categoryId: 'fashion',
       rating: 4.7,
@@ -148,10 +147,10 @@ async function main() {
       name: 'Smart Home Security Camera',
       price: 79,
       originalPrice: 129,
-      image: 'https://images.pexels.com/photos/8566473/pexels-photo-8566473.jpeg',
+      image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
       images: [
-        'https://images.pexels.com/photos/8566473/pexels-photo-8566473.jpeg',
-        'https://images.pexels.com/photos/4792728/pexels-photo-4792728.jpeg'
+        'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1582139329536-87284ff0d049?auto=format&fit=crop&q=80&w=800'
       ],
       categoryId: 'electronics',
       rating: 4.4,
@@ -168,10 +167,10 @@ async function main() {
       name: 'Luxury Skincare Set',
       price: 149,
       originalPrice: 199,
-      image: 'https://images.pexels.com/photos/3785147/pexels-photo-3785147.jpeg',
+      image: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&q=80&w=800',
       images: [
-        'https://images.pexels.com/photos/3785147/pexels-photo-3785147.jpeg',
-        'https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg'
+        'https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&q=80&w=800'
       ],
       categoryId: 'beauty',
       rating: 4.9,
@@ -188,10 +187,10 @@ async function main() {
       name: 'Professional Running Shoes',
       price: 159,
       originalPrice: 199,
-      image: 'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg',
+      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800',
       images: [
-        'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg',
-        'https://images.pexels.com/photos/1464625/pexels-photo-1464625.jpeg'
+        'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&q=80&w=800'
       ],
       categoryId: 'sports',
       rating: 4.5,
@@ -207,10 +206,10 @@ async function main() {
       name: 'Modern Coffee Table',
       price: 299,
       originalPrice: 399,
-      image: 'https://images.pexels.com/photos/1350789/pexels-photo-1350789.jpeg',
+      image: 'https://images.unsplash.com/photo-1534349762230-e0caa6c34582?auto=format&fit=crop&q=80&w=800',
       images: [
-        'https://images.pexels.com/photos/1350789/pexels-photo-1350789.jpeg',
-        'https://images.pexels.com/photos/1148955/pexels-photo-1148955.jpeg'
+        'https://images.unsplash.com/photo-1534349762230-e0caa6c34582?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&q=80&w=800'
       ],
       categoryId: 'home',
       rating: 4.6,
@@ -226,10 +225,10 @@ async function main() {
       name: 'Wireless Gaming Controller',
       price: 69,
       originalPrice: 89,
-      image: 'https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg',
+      image: 'https://images.unsplash.com/photo-1592840496694-26d035b52b48?auto=format&fit=crop&q=80&w=800',
       images: [
-        'https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg',
-        'https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg'
+        'https://images.unsplash.com/photo-1592840496694-26d035b52b48?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1600080972464-8e5f35802446?auto=format&fit=crop&q=80&w=800'
       ],
       categoryId: 'toys',
       rating: 4.7,

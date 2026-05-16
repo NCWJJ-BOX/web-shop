@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Plus, Save } from 'lucide-react';
+import { Plus, Save, Trash2 } from 'lucide-react';
 import { apiFetch, apiUpload, API_BASE } from '../../api/client';
 
 type AdminCategory = { id: string; name: string };
@@ -90,6 +90,21 @@ export function AdminProductsPage() {
   const [newFeatures, setNewFeatures] = useState('');
   const [newDescription, setNewDescription] = useState('');
   const [creating, setCreating] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const deleteProduct = async (id: string) => {
+    if (!confirm('Delete this product?')) return;
+    setDeletingId(id);
+    setError(null);
+    try {
+      await apiFetch(`/api/admin/products/${id}`, { method: 'DELETE' });
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed');
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const create = async () => {
     setCreating(true);
@@ -274,14 +289,24 @@ export function AdminProductsPage() {
                     </div>
                   </div>
                 </div>
-                <button
-                  disabled={!dirty || savingId === p.id}
-                  onClick={() => void save(p.id)}
-                  className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-blue-600 text-white font-medium disabled:opacity-50"
-                >
-                  <Save className="h-4 w-4" />
-                  {savingId === p.id ? 'Saving...' : 'Save'}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    disabled={!dirty || savingId === p.id}
+                    onClick={() => void save(p.id)}
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-blue-600 text-white font-medium disabled:opacity-50"
+                  >
+                    <Save className="h-4 w-4" />
+                    {savingId === p.id ? 'Saving...' : 'Save'}
+                  </button>
+                  <button
+                    disabled={deletingId === p.id}
+                    onClick={() => void deleteProduct(p.id)}
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-red-600 text-white font-medium disabled:opacity-50"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    {deletingId === p.id ? '...' : 'Delete'}
+                  </button>
+                </div>
               </div>
             </div>
           );

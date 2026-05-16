@@ -154,6 +154,11 @@ export function StorePage() {
         onAddToCart={cart.addToCart}
         onToggleWishlist={wishlist.toggleWishlist}
         isInWishlist={selectedProduct ? wishlist.isInWishlist(selectedProduct.id) : false}
+        onBuyNow={(product) => {
+          cart.addToCart(product);
+          closeProductModal();
+          setIsCheckoutOpen(true);
+        }}
       />
 
       <AuthModal

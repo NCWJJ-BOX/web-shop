@@ -3,74 +3,78 @@ import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from 'luci
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-white/5 border-t border-white/10 pt-20 pb-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          <div className="space-y-6">
+    <footer className="bg-white border-t border-gray-100 mt-6">
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+          {/* Brand */}
+          <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
-                <span className="text-[#030712] font-black text-xl italic">W</span>
+              <div className="w-9 h-9 bg-orange-500 rounded-xl flex items-center justify-center">
+                <span className="text-white font-black text-lg">W</span>
               </div>
-              <span className="text-2xl font-black tracking-tighter uppercase">WebShop</span>
+              <span className="text-xl font-bold text-gray-900">WebShop</span>
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Redefining the digital shopping experience with premium tech and lifestyle products. Quality guaranteed in every detail.
+            <p className="text-gray-500 text-sm leading-relaxed">
+              ช้อปปิ้งออนไลน์ สินค้าคุณภาพ ราคาดี จัดส่งไว ทั่วประเทศ
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               {[Facebook, Twitter, Instagram, Youtube].map((Icon, i) => (
-                <a key={i} href="#" className="p-2 bg-white/5 rounded-lg border border-white/10 text-gray-400 hover:text-white hover:border-white/30 transition-all">
-                  <Icon size={18} />
+                <a key={i} href="#" className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 hover:bg-orange-50 hover:text-orange-500 transition-colors">
+                  <Icon size={16} />
                 </a>
               ))}
             </div>
           </div>
 
+          {/* Shop */}
           <div>
-            <h4 className="text-lg font-bold mb-6 uppercase tracking-widest text-xs text-blue-400">Shop</h4>
-            <ul className="space-y-4 text-sm text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">Men's Collection</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Women's Collection</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Digital Gadgets</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Exclusive Items</a></li>
+            <h4 className="text-sm font-bold text-gray-900 mb-4">ช้อปปิ้ง</h4>
+            <ul className="space-y-2.5 text-sm text-gray-500">
+              <li><a href="#" className="hover:text-orange-500">สินค้าทั้งหมด</a></li>
+              <li><a href="#" className="hover:text-orange-500">Flash Sale</a></li>
+              <li><a href="#" className="hover:text-orange-500">สินค้าใหม่</a></li>
+              <li><a href="#" className="hover:text-orange-500">สินค้ายอดนิยม</a></li>
             </ul>
           </div>
 
+          {/* Support */}
           <div>
-            <h4 className="text-lg font-bold mb-6 uppercase tracking-widest text-xs text-blue-400">Support</h4>
-            <ul className="space-y-4 text-sm text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">Customer Service</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Shipping Info</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Returns & Refunds</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
+            <h4 className="text-sm font-bold text-gray-900 mb-4">ช่วยเหลือ</h4>
+            <ul className="space-y-2.5 text-sm text-gray-500">
+              <li><a href="#" className="hover:text-orange-500">ศูนย์ช่วยเหลือ</a></li>
+              <li><a href="#" className="hover:text-orange-500">วิธีการชำระเงิน</a></li>
+              <li><a href="#" className="hover:text-orange-500">การจัดส่ง</a></li>
+              <li><a href="#" className="hover:text-orange-500">คืนสินค้า & คืนเงิน</a></li>
             </ul>
           </div>
 
+          {/* Contact */}
           <div>
-            <h4 className="text-lg font-bold mb-6 uppercase tracking-widest text-xs text-blue-400">Contact</h4>
-            <ul className="space-y-4 text-sm text-gray-400">
-              <li className="flex items-center gap-3">
-                <Mail size={16} className="text-blue-500" />
-                <span>support@webshop.premium</span>
+            <h4 className="text-sm font-bold text-gray-900 mb-4">ติดต่อเรา</h4>
+            <ul className="space-y-3 text-sm text-gray-500">
+              <li className="flex items-center gap-2">
+                <Mail size={14} className="text-orange-500" />
+                <span>support@webshop.com</span>
               </li>
-              <li className="flex items-center gap-3">
-                <Phone size={16} className="text-blue-500" />
-                <span>+1 (555) 000-Premium</span>
+              <li className="flex items-center gap-2">
+                <Phone size={14} className="text-orange-500" />
+                <span>02-XXX-XXXX</span>
               </li>
-              <li className="flex items-center gap-3">
-                <MapPin size={16} className="text-blue-500" />
-                <span>123 Luxury Ave, Tech City</span>
+              <li className="flex items-center gap-2">
+                <MapPin size={14} className="text-orange-500" />
+                <span>กรุงเทพมหานคร, ประเทศไทย</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-gray-500">
-            © 2026 WebShop Premium. All rights reserved. Built for excellence.
+        <div className="pt-6 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-3">
+          <p className="text-xs text-gray-400">
+            &copy; 2026 WebShop. สงวนลิขสิทธิ์
           </p>
-          <div className="flex gap-8 text-[10px] font-bold text-gray-600 uppercase tracking-widest">
-            <a href="#" className="hover:text-gray-400 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-gray-400 transition-colors">Cookie Policy</a>
+          <div className="flex gap-6 text-xs text-gray-400">
+            <a href="#" className="hover:text-orange-500">นโยบายความเป็นส่วนตัว</a>
+            <a href="#" className="hover:text-orange-500">ข้อกำหนดการใช้งาน</a>
           </div>
         </div>
       </div>

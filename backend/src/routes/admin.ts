@@ -391,3 +391,60 @@ adminRouter.patch('/products/:id', requireAdmin(), async (req, res) => {
   const updated = await prisma.product.update({ where: { id }, data });
   res.json(updated);
 });
+
+adminRouter.delete('/products/:id', requireAdmin(), async (req, res) => {
+  const id = req.params.id;
+  const existing = await prisma.product.findUnique({ where: { id } });
+  if (!existing) {
+    res.status(404).json({ error: 'Product not found' });
+    return;
+  }
+  await prisma.product.delete({ where: { id } });
+  res.json({ success: true });
+});
+
+adminRouter.post('/categories', requireAdmin(), async (req, res) => {
+  const body = isPlainObject(req.body) ? req.body : {};
+  const name = readString(body.name)?.trim();
+  const icon = readString(body.icon)?.trim();
+  if (!name) {
+    res.status(400).json({ error: 'Category name is required' });
+    return;
+  }
+  const created = await prisma.category.create({
+    data: { name, icon: icon || '' },
+  });
+  res.status(201).json(created);
+});
+
+adminRouter.patch('/categories/:id', requireAdmin(), async (req, res) => {
+  const id = req.params.id;
+  const body = isPlainObject(req.body) ? req.body : {};
+  const existing = await prisma.category.findUnique({ where: { id } });
+  if (!existing) {
+    res.status(404).json({ error: 'Category not found' });
+    return;
+  }
+  const data: Prisma.CategoryUpdateInput = {};
+  const name = readString(body.name);
+  if (name !== undefined) data.name = name.trim();
+  const icon = readString(body.icon);
+  if (icon !== undefined) data.icon = icon.trim();
+  const updated = await prisma.category.update({ where: { id }, data });
+  res.json(updated);
+});
+
+adminRouter.delete('/categories/:id', requireAdmin(), async (req, res) => {
+  const id = req.params.id;
+  const existing = await prisma.category.findUnique({ where: { id }, include: { products: true } });
+  if (!existing) {
+    res.status(404).json({ error: 'Category not found' });
+    return;
+  }
+  if (existing.products.length > 0) {
+    res.status(400).json({ error: 'Cannot delete category with products. Remove or reassign products first.' });
+    return;
+  }
+  await prisma.category.delete({ where: { id } });
+  res.json({ success: true });
+});

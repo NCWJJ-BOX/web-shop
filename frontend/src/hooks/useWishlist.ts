@@ -1,8 +1,23 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Product } from '../types';
 
+const STORAGE_KEY = 'webshop_wishlist';
+
+function loadWishlist(): Product[] {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
 export const useWishlist = () => {
-  const [wishlistItems, setWishlistItems] = useState<Product[]>([]);
+  const [wishlistItems, setWishlistItems] = useState<Product[]>(loadWishlist);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(wishlistItems));
+  }, [wishlistItems]);
 
   const addToWishlist = useCallback((product: Product) => {
     setWishlistItems(items => {
