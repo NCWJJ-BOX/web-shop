@@ -96,22 +96,14 @@ export async function fetchAdminStats(): Promise<AdminStats> {
   const pendingPaymentCount = (orders || []).filter((o) => o.status === 'PAYMENT_SUBMITTED').length;
 
   // Get user info for recent orders
-  const recentOrders = [];
-  for (const o of (orders || []).slice(0, 10)) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('id, name, email')
-      .eq('id', o.userId)
-      .maybeSingle();
-    recentOrders.push({
-      id: o.id,
-      orderNo: o.orderNo,
-      status: o.status,
-      total: o.total,
-      createdAt: o.createdAt,
-      user: profile || { id: o.userId, name: 'Unknown', email: '' },
-    });
-  }
+  const recentOrders = (orders || []).slice(0, 10).map((o) => ({
+    id: o.id,
+    orderNo: o.orderNo,
+    status: o.status,
+    total: o.total,
+    createdAt: o.createdAt,
+    user: { id: o.userId, name: 'User', email: '' },
+  }));
 
   // Top products from order items
   const { data: items } = await supabase
@@ -280,12 +272,6 @@ export async function fetchAdminOrders(status?: OrderStatus): Promise<AdminOrder
       .eq('orderId', o.id)
       .maybeSingle();
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('id, name, email')
-      .eq('id', o.userId)
-      .maybeSingle();
-
     result.push({
       id: o.id,
       orderNo: o.orderNo,
@@ -297,7 +283,7 @@ export async function fetchAdminOrders(status?: OrderStatus): Promise<AdminOrder
       shippingPhone: o.shippingPhone,
       shippingAddress: o.shippingAddress,
       createdAt: o.createdAt,
-      user: profile || { id: o.userId, name: 'Unknown', email: '' },
+      user: { id: o.userId, name: 'User', email: '' },
       items: (items || []).map((it) => ({
         id: it.id,
         name: it.name,
@@ -372,12 +358,6 @@ export async function fetchAdminPayments(): Promise<AdminPayment[]> {
       .single();
     if (!order) continue;
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('id, name, email')
-      .eq('id', order.userId)
-      .maybeSingle();
-
     result.push({
       id: p.id,
       status: p.status,
@@ -396,7 +376,7 @@ export async function fetchAdminPayments(): Promise<AdminPayment[]> {
         shippingPhone: order.shippingPhone,
         shippingAddress: order.shippingAddress,
         createdAt: order.createdAt,
-        user: profile || { id: order.userId, name: 'Unknown', email: '' },
+        user: { id: order.userId, name: 'User', email: '' },
         items: [],
       },
     });
