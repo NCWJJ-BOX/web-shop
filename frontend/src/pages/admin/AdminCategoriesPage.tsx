@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import { apiFetch } from '../../api/client';
-
-type AdminCategory = { id: string; name: string; icon: string };
+import { fetchAdminCategories, createAdminCategory, updateAdminCategory, deleteAdminCategory, type AdminCategory } from '../../lib/admin';
 
 export function AdminCategoriesPage() {
   const [categories, setCategories] = useState<AdminCategory[]>([]);
@@ -18,7 +16,7 @@ export function AdminCategoriesPage() {
   const load = async () => {
     setError(null);
     try {
-      const data = await apiFetch<AdminCategory[]>('/api/admin/categories');
+      const data = await fetchAdminCategories();
       setCategories(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed');
@@ -34,10 +32,7 @@ export function AdminCategoriesPage() {
     setCreating(true);
     setError(null);
     try {
-      const created = await apiFetch<AdminCategory>('/api/admin/categories', {
-        method: 'POST',
-        body: JSON.stringify({ name: newName.trim(), icon: newIcon.trim() }),
-      });
+      const created = await createAdminCategory({ name: newName.trim(), icon: newIcon.trim() });
       setCategories((prev) => [...prev, created]);
       setNewName('');
       setNewIcon('');
@@ -51,10 +46,7 @@ export function AdminCategoriesPage() {
   const save = async (id: string) => {
     setError(null);
     try {
-      const updated = await apiFetch<AdminCategory>(`/api/admin/categories/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ name: editName.trim(), icon: editIcon.trim() }),
-      });
+      const updated = await updateAdminCategory(id, { name: editName.trim(), icon: editIcon.trim() });
       setCategories((prev) => prev.map((c) => (c.id === id ? updated : c)));
       setEditingId(null);
     } catch (e) {
@@ -67,7 +59,7 @@ export function AdminCategoriesPage() {
     setDeletingId(id);
     setError(null);
     try {
-      await apiFetch(`/api/admin/categories/${id}`, { method: 'DELETE' });
+      await deleteAdminCategory(id);
       setCategories((prev) => prev.filter((c) => c.id !== id));
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed');

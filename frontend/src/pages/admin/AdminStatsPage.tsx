@@ -1,34 +1,12 @@
 import { useEffect, useState } from 'react';
-import { apiFetch } from '../../api/client';
-
-type AdminStats = {
-  revenueTotal: number;
-  paidOrdersCount: number;
-  totalOrdersCount: number;
-  pendingPaymentCount: number;
-  recentOrders: Array<{
-    id: string;
-    orderNo: string;
-    status: string;
-    total: number;
-    createdAt: string;
-    user: { id: string; name: string; email: string };
-  }>;
-  topProducts: Array<{
-    productId: string;
-    name: string;
-    image: string;
-    quantity: number;
-    revenue: number;
-  }>;
-};
+import { fetchAdminStats, type AdminStats } from '../../lib/admin';
 
 export function AdminStatsPage() {
   const [data, setData] = useState<AdminStats | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    apiFetch<AdminStats>('/api/admin/stats')
+    fetchAdminStats()
       .then(setData)
       .catch((e) => setError(e instanceof Error ? e.message : 'Failed'));
   }, []);

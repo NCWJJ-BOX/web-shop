@@ -1,22 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Plus, Save, Trash2 } from 'lucide-react';
-import { apiFetch, apiUpload, API_BASE } from '../../api/client';
-
-type AdminCategory = { id: string; name: string };
-
-type AdminProduct = {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  images: string[];
-  features: string[];
-  description: string;
-  categoryId: string;
-  isFeatured: boolean;
-  isActive: boolean;
-  stockQty: number;
-};
+import { fetchAdminProducts, createAdminProduct, updateAdminProduct, deleteAdminProduct, uploadProductImage, fetchAdminCategories, type AdminProduct, type AdminCategory } from '../../lib/admin';
 
 function parseCsv(input: string): string[] {
   return input
@@ -38,8 +22,8 @@ export function AdminProductsPage() {
     setError(null);
     try {
       const [ps, cs] = await Promise.all([
-        apiFetch<AdminProduct[]>('/api/admin/products'),
-        apiFetch<Array<{ id: string; name: string }>>('/api/admin/categories'),
+        fetchAdminProducts(),
+        fetchAdminCategories(),
       ]);
       setProducts(ps);
       setCategories(cs);
@@ -62,10 +46,7 @@ export function AdminProductsPage() {
     setSavingId(id);
     setError(null);
     try {
-      const updated = await apiFetch<AdminProduct>(`/api/admin/products/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(draft),
-      });
+      const updated = await updateAdminProduct(id, draft);
       setProducts((prev) => prev.map((p) => (p.id === id ? updated : p)));
       setDraftById((prev) => {
         const copy = { ...prev };
@@ -97,7 +78,7 @@ export function AdminProductsPage() {
     setDeletingId(id);
     setError(null);
     try {
-      await apiFetch(`/api/admin/products/${id}`, { method: 'DELETE' });
+      await deleteAdminProduct(id);
       setProducts((prev) => prev.filter((p) => p.id !== id));
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed');
@@ -112,28 +93,20 @@ export function AdminProductsPage() {
     try {
       let imageUrl = newImage;
       if (newImageFile) {
-        const form = new FormData();
-        form.append('image', newImageFile);
-        const uploaded = await apiUpload<{ path: string }>('/api/admin/uploads/product-image', form);
-        imageUrl = `${API_BASE}${uploaded.path}`;
+        imageUrl = await uploadProductImage(newImageFile);
       }
 
-      const created = await apiFetch<AdminProduct>('/api/admin/products', {
-        method: 'POST',
-        body: JSON.stringify({
-          name: newName,
-          categoryId: newCategoryId,
-          price: Number(newPrice),
-          image: imageUrl,
-          images: parseCsv(newImages).length ? parseCsv(newImages) : [imageUrl],
-          features: parseCsv(newFeatures),
-          description: newDescription,
-          stockQty: Number(newStock),
-          inStock: true,
-          isNew: true,
-          isFeatured: false,
-          isActive: true,
-        }),
+      const created = await createAdminProduct({
+        name: newName,
+        categoryId: newCategoryId,
+        price: Number(newPrice),
+        image: imageUrl,
+        images: parseCsv(newImages).length ? parseCsv(newImages) : [imageUrl],
+        features: parseCsv(newFeatures),
+        description: newDescription,
+        stockQty: Number(newStock),
+        isFeatured: false,
+        isActive: true,
       });
       setProducts((prev) => [created, ...prev]);
       setNewOpen(false);

@@ -13,8 +13,9 @@ import { AccountModal } from '../components/AccountModal';
 import { useCart } from '../hooks/useCart';
 import { useWishlist } from '../hooks/useWishlist';
 import { useAuth } from '../hooks/useAuth';
-import { Category, Product } from '../types';
+import { Category, Product, Order } from '../types';
 import { fetchCategories, fetchProducts } from '../lib/db';
+import { createOrder, uploadSlip, getMyOrders } from '../lib/orders';
 
 export function StorePage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -64,6 +65,43 @@ export function StorePage() {
     setSelectedProduct(null);
   };
 
+  const handleCheckout = () => {
+    if (!auth.isAuthenticated) {
+      setIsCheckoutOpen(false);
+      setIsAuthOpen(true);
+      return;
+    }
+    cart.setIsCartOpen(false);
+    setIsCheckoutOpen(true);
+  };
+
+  const handleAccountClick = () => {
+    if (auth.isAuthenticated) {
+      setIsAccountOpen(true);
+    } else {
+      setIsAuthOpen(true);
+    }
+  };
+
+  const handleCreateOrder = async (input: {
+    shippingName: string;
+    shippingPhone: string;
+    shippingAddress: string;
+    items: { productId: string; quantity: number }[];
+  }): Promise<Order> => {
+    const order = await createOrder(input);
+    cart.clearCart();
+    return order;
+  };
+
+  const handleUploadSlip = async (orderId: string, slip: File): Promise<Order> => {
+    return uploadSlip(orderId, slip);
+  };
+
+  const handleLoadOrders = async (): Promise<Order[]> => {
+    return getMyOrders();
+  };
+
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
       <Header
@@ -71,7 +109,7 @@ export function StorePage() {
         wishlistCount={wishlist.wishlistCount}
         onCartClick={() => cart.setIsCartOpen(true)}
         onSearchChange={setSearchQuery}
-        onAccountClick={() => setIsAuthOpen(true)}
+        onAccountClick={handleAccountClick}
         userName={auth.user?.name}
       />
 
@@ -103,10 +141,7 @@ export function StorePage() {
         onUpdateQuantity={cart.updateQuantity}
         onRemoveItem={cart.removeFromCart}
         onClearCart={cart.clearCart}
-        onCheckout={() => {
-          cart.setIsCartOpen(false);
-          setIsCheckoutOpen(true);
-        }}
+        onCheckout={handleCheckout}
       />
 
       <ProductModal
@@ -119,7 +154,7 @@ export function StorePage() {
         onBuyNow={(product) => {
           cart.addToCart(product);
           closeProductModal();
-          setIsCheckoutOpen(true);
+          handleCheckout();
         }}
       />
 
@@ -136,9 +171,9 @@ export function StorePage() {
         onClose={() => setIsCheckoutOpen(false)}
         items={cart.cartItems}
         total={cart.cartTotal}
-        isAuthenticated={!!auth.user}
-        onCreateOrder={async () => ({ id: 'demo', orderNo: 'DEMO-001', status: 'PENDING_PAYMENT', currency: 'THB', subtotal: 0, shippingFee: 0, total: 0, shippingName: '', shippingPhone: '', shippingAddress: '', items: [], createdAt: new Date().toISOString() })}
-        onUploadSlip={async () => ({ id: 'demo', orderNo: 'DEMO-001', status: 'PAYMENT_SUBMITTED', currency: 'THB', subtotal: 0, shippingFee: 0, total: 0, shippingName: '', shippingPhone: '', shippingAddress: '', items: [], createdAt: new Date().toISOString() })}
+        isAuthenticated={auth.isAuthenticated}
+        onCreateOrder={handleCreateOrder}
+        onUploadSlip={handleUploadSlip}
       />
 
       {auth.user && (
@@ -147,8 +182,8 @@ export function StorePage() {
           onClose={() => setIsAccountOpen(false)}
           user={auth.user}
           onLogout={auth.logout}
-          loadOrders={async () => []}
-          uploadSlip={async () => ({ id: 'demo', orderNo: 'DEMO-001', status: 'PAYMENT_SUBMITTED', currency: 'THB', subtotal: 0, shippingFee: 0, total: 0, shippingName: '', shippingPhone: '', shippingAddress: '', items: [], createdAt: new Date().toISOString() })}
+          loadOrders={handleLoadOrders}
+          uploadSlip={handleUploadSlip}
         />
       )}
     </div>

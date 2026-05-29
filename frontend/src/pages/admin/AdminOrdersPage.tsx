@@ -1,11 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Save } from 'lucide-react';
-import { apiFetch } from '../../api/client';
-import type { Order, OrderStatus } from '../../types';
-
-type AdminOrder = Order & {
-  user: { id: string; name: string; email: string };
-};
+import { fetchAdminOrders, updateOrderShipping, type AdminOrder } from '../../lib/admin';
+import type { OrderStatus } from '../../types';
 
 const STATUSES: OrderStatus[] = [
   'PENDING_PAYMENT',
@@ -31,8 +27,7 @@ export function AdminOrdersPage() {
   const load = async () => {
     setError(null);
     try {
-      const q = filter === 'ALL' ? '' : `?status=${encodeURIComponent(filter)}`;
-      const data = await apiFetch<AdminOrder[]>(`/api/admin/orders${q}`);
+      const data = await fetchAdminOrders(filter === 'ALL' ? undefined : filter);
       setOrders(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed');
@@ -47,10 +42,7 @@ export function AdminOrdersPage() {
     setSavingId(orderId);
     setError(null);
     try {
-      const updated = await apiFetch<AdminOrder>(`/api/admin/orders/${orderId}/shipping`, {
-        method: 'PATCH',
-        body: JSON.stringify(patch),
-      });
+      const updated = await updateOrderShipping(orderId, patch);
       setOrders((prev) => prev.map((o) => (o.id === orderId ? updated : o)));
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed');
@@ -68,7 +60,7 @@ export function AdminOrdersPage() {
         </div>
         <select
           value={filter}
-          onChange={(e) => setFilter(e.target.value as any)}
+          onChange={(e) => setFilter(e.target.value as OrderStatus | 'ALL')}
           className="border border-gray-300 rounded-xl px-3 py-2"
         >
           <option value="ALL">All</option>

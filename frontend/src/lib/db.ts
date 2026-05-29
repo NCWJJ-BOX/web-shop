@@ -11,7 +11,7 @@ export async function fetchCategories(): Promise<Category[]> {
     id: String(c.id),
     name: c.name as string,
     icon: (c.icon as string) || '',
-    count: 0,
+    count: (c.count as number) || 0,
   }));
 }
 

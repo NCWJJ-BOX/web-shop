@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { X, LogOut, Upload, Package, Clock, CheckCircle, XCircle } from 'lucide-react';
 import type { Order } from '../types';
-import { API_BASE } from '../api/client';
+import { supabase } from '../lib/supabase';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof Clock }> = {
   PENDING_PAYMENT: { label: 'รอชำระเงิน', color: 'bg-yellow-100 text-yellow-700', icon: Clock },
@@ -136,7 +136,7 @@ export function AccountModal(props: {
                             <input type="file" accept="image/*" onChange={(e) => void onFile(o.id, e.target.files?.[0] ?? null)} className="hidden" />
                           </label>
                           {o.payment?.slipPath && (
-                            <a className="text-sm text-orange-500 hover:text-orange-600 font-medium" href={`${API_BASE}${o.payment.slipPath}`} target="_blank" rel="noreferrer">
+                            <a className="text-sm text-orange-500 hover:text-orange-600 font-medium" href={supabase.storage.from('payment-slips').getPublicUrl(o.payment.slipPath).data.publicUrl} target="_blank" rel="noreferrer">
                               ดูสลิป
                             </a>
                           )}

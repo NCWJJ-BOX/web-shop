@@ -1,15 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Check, XCircle } from 'lucide-react';
-import { apiFetch } from '../../api/client';
-import { API_BASE } from '../../api/client';
-import type { Order, Payment } from '../../types';
+import { fetchAdminPayments, approvePayment, rejectPayment, type AdminPayment } from '../../lib/admin';
+import { supabase } from '../../lib/supabase';
 import { ImagePreviewModal } from '../../components/ImagePreviewModal';
-
-type AdminPayment = Payment & {
-  order: Order & {
-    user: { id: string; name: string; email: string };
-  };
-};
 
 export function AdminPaymentsPage() {
   const [payments, setPayments] = useState<AdminPayment[]>([]);
@@ -24,7 +17,7 @@ export function AdminPaymentsPage() {
   const load = async () => {
     setError(null);
     try {
-      const data = await apiFetch<AdminPayment[]>('/api/admin/payments');
+      const data = await fetchAdminPayments();
       setPayments(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed');
@@ -35,29 +28,31 @@ export function AdminPaymentsPage() {
     void load();
   }, []);
 
-  const approve = async (paymentId: string) => {
+  const handleApprove = async (paymentId: string) => {
     setError(null);
     try {
-      await apiFetch(`/api/admin/payments/${paymentId}/approve`, { method: 'POST' });
+      await approvePayment(paymentId);
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed');
     }
   };
 
-  const reject = async (paymentId: string) => {
+  const handleReject = async (paymentId: string) => {
     setError(null);
     try {
-      await apiFetch(`/api/admin/payments/${paymentId}/reject`, {
-        method: 'POST',
-        body: JSON.stringify({ note: rejectNote }),
-      });
+      await rejectPayment(paymentId, rejectNote);
       setRejectingId(null);
       setRejectNote('');
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed');
     }
+  };
+
+  const getSlipUrl = (slipPath: string) => {
+    const { data } = supabase.storage.from('payment-slips').getPublicUrl(slipPath);
+    return data.publicUrl;
   };
 
   return (
@@ -88,7 +83,7 @@ export function AdminPaymentsPage() {
                     href="#"
                     onClick={(e) => {
                       e.preventDefault();
-                      setPreviewUrl(`${API_BASE}${p.slipPath}`);
+                      setPreviewUrl(getSlipUrl(p.slipPath));
                       setPreviewTitle(p.order.orderNo);
                     }}
                   >
@@ -96,7 +91,7 @@ export function AdminPaymentsPage() {
                   </a>
                   <button
                     disabled={p.status !== 'SUBMITTED'}
-                    onClick={() => void approve(p.id)}
+                    onClick={() => void handleApprove(p.id)}
                     className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-green-600 text-white font-medium disabled:opacity-50"
                   >
                     <Check className="h-4 w-4" />
@@ -142,7 +137,7 @@ export function AdminPaymentsPage() {
                 </button>
                 <button
                   disabled={!rejectNote.trim()}
-                  onClick={() => void reject(rejectingId)}
+                  onClick={() => void handleReject(rejectingId)}
                   className="px-4 py-2 rounded-xl bg-red-600 text-white font-medium disabled:opacity-50"
                 >
                   Reject

@@ -74,16 +74,16 @@ export function useAuth() {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { name } },
+        options: { data: { name, role: 'CUSTOMER' } },
       });
       if (error) throw error;
       if (data.user) {
         const u = data.user;
         const authUser: AuthUser = {
           id: u.id,
-          name: u.user_metadata?.name || name || u.email?.split('@')[0] || 'User',
+          name: u.user_metadata?.name || u.email?.split('@')[0] || 'User',
           email: u.email || '',
-          role: 'CUSTOMER',
+          role: u.user_metadata?.role || 'CUSTOMER',
         };
         setUser(authUser);
         return authUser;

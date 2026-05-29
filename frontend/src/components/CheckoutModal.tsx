@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { X, Upload, MapPin, Phone, User as UserIcon, Package } from 'lucide-react';
 import type { CartItem, Order } from '../types';
-import { API_BASE } from '../api/client';
+import { supabase } from '../lib/supabase';
 
 export function CheckoutModal(props: {
   isOpen: boolean;
@@ -148,7 +148,7 @@ export function CheckoutModal(props: {
                 </button>
               </div>
               {order.payment?.slipPath && (
-                <a className="text-sm text-orange-500 hover:text-orange-600 font-medium" href={`${API_BASE}${order.payment.slipPath}`} target="_blank" rel="noreferrer">
+                <a className="text-sm text-orange-500 hover:text-orange-600 font-medium" href={supabase.storage.from('payment-slips').getPublicUrl(order.payment.slipPath).data.publicUrl} target="_blank" rel="noreferrer">
                   ดูสลิปที่อัปโหลด
                 </a>
               )}
