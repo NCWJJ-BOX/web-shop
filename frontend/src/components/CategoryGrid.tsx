@@ -8,15 +8,17 @@ interface CategoryGridProps {
 }
 
 const CATEGORY_IMAGES: Record<string, string> = {
-  'electronics': 'https://images.unsplash.com/photo-1519389403241-75e17e6975a9?auto=format&fit=crop&q=80&w=400',
-  'fashion': 'https://images.unsplash.com/photo-1445204450317-197ef2c9a717?auto=format&fit=crop&q=80&w=400',
-  'home': 'https://images.unsplash.com/photo-1484101403033-57105e2e4756?auto=format&fit=crop&q=80&w=400',
-  'beauty': 'https://images.unsplash.com/photo-1522338242962-d602a92f0003?auto=format&fit=crop&q=80&w=400',
-  'sports': 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=400',
+  'electronic devices': 'https://images.unsplash.com/photo-1519389403241-75e17e6975a9?auto=format&fit=crop&q=80&w=400',
+  'electronic accessories': 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=400',
+  'tv & home appliances': 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?auto=format&fit=crop&q=80&w=400',
+  'health & beauty': 'https://images.unsplash.com/photo-1522338242962-d602a92f0003?auto=format&fit=crop&q=80&w=400',
+  'babies & toys': 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&q=80&w=400',
+  'home & living': 'https://images.unsplash.com/photo-1484101403033-57105e2e4756?auto=format&fit=crop&q=80&w=400',
 };
 
 function getCategoryImage(name: string): string {
   const lower = name.toLowerCase();
+  if (CATEGORY_IMAGES[lower]) return CATEGORY_IMAGES[lower];
   for (const [key, url] of Object.entries(CATEGORY_IMAGES)) {
     if (lower.includes(key)) return url;
   }
@@ -62,7 +64,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
                   alt={category.name}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = `https://via.placeholder.com/100x100?text=${category.name}`;
+                    (e.target as HTMLImageElement).style.display = 'none';
                   }}
                 />
               </div>
