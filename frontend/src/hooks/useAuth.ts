@@ -24,7 +24,7 @@ export function useAuth() {
           id: u.id,
           name: u.user_metadata?.name || u.email?.split('@')[0] || 'User',
           email: u.email || '',
-          role: u.user_metadata?.role || 'CUSTOMER',
+          role: (u.app_metadata?.role as AuthUser['role']) || 'CUSTOMER',
         });
       }
       setBootstrapped(true);
@@ -37,7 +37,7 @@ export function useAuth() {
           id: u.id,
           name: u.user_metadata?.name || u.email?.split('@')[0] || 'User',
           email: u.email || '',
-          role: u.user_metadata?.role || 'CUSTOMER',
+          role: (u.app_metadata?.role as AuthUser['role']) || 'CUSTOMER',
         });
       } else {
         setUser(null);
@@ -58,7 +58,7 @@ export function useAuth() {
           id: u.id,
           name: u.user_metadata?.name || u.email?.split('@')[0] || 'User',
           email: u.email || '',
-          role: u.user_metadata?.role || 'CUSTOMER',
+          role: (u.app_metadata?.role as AuthUser['role']) || 'CUSTOMER',
         };
         setUser(authUser);
         return authUser;
@@ -74,7 +74,7 @@ export function useAuth() {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { name, role: 'CUSTOMER' } },
+        options: { data: { name } },
       });
       if (error) throw error;
       if (data.user) {
@@ -83,7 +83,7 @@ export function useAuth() {
           id: u.id,
           name: u.user_metadata?.name || u.email?.split('@')[0] || 'User',
           email: u.email || '',
-          role: u.user_metadata?.role || 'CUSTOMER',
+          role: (u.app_metadata?.role as AuthUser['role']) || 'CUSTOMER',
         };
         setUser(authUser);
         return authUser;
